@@ -26,16 +26,21 @@ void Camera::updateDirection() {
 }
 
 void Camera::handleMouseMovement(int x, int y) {
+    static const int windowCenterX = 400; // Assuming window width = 800
+    static const int windowCenterY = 300; // Assuming window height = 600
+
     if (firstMouse) {
-        lastMouseX = x;
-        lastMouseY = y;
+        lastMouseX = windowCenterX;
+        lastMouseY = windowCenterY;
         firstMouse = false;
+        glutWarpPointer(windowCenterX, windowCenterY);
+        return;
     }
 
-    float xoffset = x - lastMouseX;
-    float yoffset = lastMouseY - y;
-    lastMouseX = x;
-    lastMouseY = y;
+    // Calculate offsets
+    float xoffset = x - windowCenterX;
+    float yoffset = windowCenterY - y; // Reversed since y-coordinates go from top to bottom
+    glutWarpPointer(windowCenterX, windowCenterY); // Recenter the mouse
 
     xoffset *= sensitivity;
     yoffset *= sensitivity;
@@ -43,11 +48,13 @@ void Camera::handleMouseMovement(int x, int y) {
     yaw += xoffset;
     pitch += yoffset;
 
+    // Clamp pitch to avoid flipping
     if (pitch > 89.0f) pitch = 89.0f;
     if (pitch < -89.0f) pitch = -89.0f;
 
     updateDirection();
 }
+
 
 void Camera::moveForward(float speed) {
     posX += frontX * speed;
