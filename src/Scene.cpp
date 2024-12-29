@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <Windows.h>
 #include <GL/glut.h>
+#include <iostream>
 
 Camera camera;
 
@@ -41,13 +42,21 @@ void renderShadowedObjects() {
     float shadowMatrix[4][4];
     computeShadowMatrix(shadowMatrix, groundPlane, lightPosition);
 
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            std::cout << "shadowMatrix[" << i << "][" << j << "] = " << shadowMatrix[i][j] << std::endl;
+        }
+    }
+
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glPushMatrix();
     glMultMatrixf((const float*)shadowMatrix);
-    glColor4f(0.0f, 0.0f, 0.0f, 0.5f); // Semi-transparent black
+    glColor4f(1.0f, 0.0f, 0.0f, 0.7f); // Semi-transparent black
     drawTablesAndChairs();             // Draw shadows of tables and chairs
+    glutSolidCube(1.0f);                       // Render a cube
     glPopMatrix();
 
     glDisable(GL_BLEND);
@@ -99,17 +108,7 @@ void display() {
     drawSkybox();  // Draw the skybox
     drawFloor();   // Draw the floor
 
-    // Render shadows
-    glDisable(GL_LIGHTING);    // Disable lighting for shadow rendering
-    glEnable(GL_BLEND);        // Enable blending for transparency
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDisable(GL_DEPTH_TEST);  // Disable depth testing for shadows
-
     renderShadowedObjects();   // Render shadows
-
-    glEnable(GL_DEPTH_TEST);   // Re-enable depth testing
-    glDisable(GL_BLEND);       // Disable blending
-    glEnable(GL_LIGHTING);     // Re-enable lighting
 
     // Render objects
     drawWalls();

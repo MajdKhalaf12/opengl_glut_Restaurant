@@ -524,7 +524,9 @@ void initScene();
 void initScene() {
     initializeSkyboxTextures();
     initializeTextures(); // Load textures
-    initGL();             // Setup OpenGL properties
+   
+    initGL();             // Setup OpenGL properties 
+    
 }
 
 

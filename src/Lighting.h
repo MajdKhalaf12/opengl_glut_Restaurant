@@ -9,6 +9,7 @@
 #include <GL/glut.h>
 
 void setupLighting();
-void computeShadowMatrix(float shadowMat[4][4], const float groundplane[4], const float lightpos[4]);
+void computeShadowMatrix(GLfloat shadowMatrix[4][4], const GLfloat groundPlane[4], const GLfloat lightPos[4]);
+
 
 #endif

@@ -2,18 +2,20 @@
 #include <GL/glut.h>
 
 // Shadow matrix for projecting shadows
-void computeShadowMatrix(float shadowMat[4][4], const float groundplane[4], const float lightpos[4]) {
-    float dot = groundplane[0] * lightpos[0] +
-        groundplane[1] * lightpos[1] +
-        groundplane[2] * lightpos[2] +
-        groundplane[3] * lightpos[3];
+void computeShadowMatrix(GLfloat shadowMatrix[4][4], const GLfloat groundPlane[4], const GLfloat lightPos[4]) {
+    GLfloat dot = groundPlane[0] * lightPos[0] +
+        groundPlane[1] * lightPos[1] +
+        groundPlane[2] * lightPos[2] +
+        groundPlane[3] * lightPos[3];
 
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            shadowMat[i][j] = dot - lightpos[i] * groundplane[j];
+            shadowMatrix[i][j] = dot;
+            shadowMatrix[i][j] -= lightPos[i] * groundPlane[j];
         }
     }
 }
+
 
 // Setup lighting
 void setupLighting() {
