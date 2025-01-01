@@ -1,5 +1,6 @@
 #include "Objects.h"
 #include "Textures.h"
+#include "Lighting.h"
 #include <stdlib.h>
 #include <Windows.h>
 #include <GL/glut.h>
@@ -10,6 +11,7 @@
 GLuint floorTexture;
 GLuint chairTexture;
 GLuint wallTexture;
+GLuint painting;
 
 GLuint skyboxTextures[6]; // 0 = front, 1 = back, 2 = left, 3 = right, 4 = top, 5 = bottom
 
@@ -39,6 +41,16 @@ void drawSkybox() {
 
     glPushMatrix();
     glDisable(GL_LIGHTING); // Disable lighting for the skybox
+
+    glDisable(GL_LIGHTING); // Disable lighting for the skybox
+
+    // Apply night mode effect to the skybox
+    if (isNightMode) {
+        glColor3f(0.1f, 0.1f, 0.3f);  // Darker tint for the night sky
+    }
+    else {
+        glColor3f(1.0f, 1.0f, 1.0f);  // Regular color for day sky
+    }
 
     for (int i = 0; i < 6; ++i) {
         glBindTexture(GL_TEXTURE_2D, skyboxTextures[i]);
@@ -97,7 +109,8 @@ void drawSkybox() {
 void initializeTextures() {
     floorTexture = loadTexture("C:/Users/Majd/Desktop/Computer Science/programming/opengl/opengl_legacy/src/floor.jpg");
     chairTexture = loadTexture("C:/Users/Majd/Desktop/Computer Science/programming/opengl/opengl_legacy/src/chair.jpg");
-    wallTexture = loadTexture("C:/Users/Majd/Desktop/Computer Science/programming/opengl/opengl_legacy/src/chair.jpg"); // Wall texture
+    wallTexture = loadTexture("C:/Users/Majd/Desktop/Computer Science/programming/opengl/opengl_legacy/src/chair.jpg");
+    painting = loadTexture("C:/Users/Majd/Desktop/Computer Science/programming/opengl/opengl_legacy/src/mona-lisa.jpg"); 
 }
 
 void drawFloor() {
@@ -144,15 +157,96 @@ void drawChair(float x, float z, float angle) {
     // Seat
     glColor3f(1.0f, 1.0f, 1.0f); // White for texture
     glPushMatrix();
-    glScalef(1.0f, 0.1f, 1.0f);
-    glutSolidCube(1.0f);
+    glTranslatef(0.0f, 0.05f, 0.0f); // Center the seat at the correct height
+    glBegin(GL_QUADS);
+
+    // Top face with texture
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.5f, 0.05f, 0.5f);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(0.5f, 0.05f, 0.5f);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(0.5f, 0.05f, -0.5f);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(-0.5f, 0.05f, -0.5f);
+
+    // Other faces without texture (set to a solid color)
+    glColor3f(0.5f, 0.5f, 0.5f); // Gray
+    // Bottom face
+    glVertex3f(-0.5f, -0.05f, 0.5f);
+    glVertex3f(0.5f, -0.05f, 0.5f);
+    glVertex3f(0.5f, -0.05f, -0.5f);
+    glVertex3f(-0.5f, -0.05f, -0.5f);
+
+    // Front face
+    glVertex3f(-0.5f, -0.05f, 0.5f);
+    glVertex3f(0.5f, -0.05f, 0.5f);
+    glVertex3f(0.5f, 0.05f, 0.5f);
+    glVertex3f(-0.5f, 0.05f, 0.5f);
+
+    // Back face
+    glVertex3f(-0.5f, -0.05f, -0.5f);
+    glVertex3f(0.5f, -0.05f, -0.5f);
+    glVertex3f(0.5f, 0.05f, -0.5f);
+    glVertex3f(-0.5f, 0.05f, -0.5f);
+
+    // Left face
+    glVertex3f(-0.5f, -0.05f, 0.5f);
+    glVertex3f(-0.5f, -0.05f, -0.5f);
+    glVertex3f(-0.5f, 0.05f, -0.5f);
+    glVertex3f(-0.5f, 0.05f, 0.5f);
+
+    // Right face
+    glVertex3f(0.5f, -0.05f, 0.5f);
+    glVertex3f(0.5f, -0.05f, -0.5f);
+    glVertex3f(0.5f, 0.05f, -0.5f);
+    glVertex3f(0.5f, 0.05f, 0.5f);
+
+    glEnd();
     glPopMatrix();
 
-    // Backrest
+
+    // Backrest with texture on front and back faces
     glPushMatrix();
-    glTranslatef(0.0f, 0.6f, -0.45f);
-    glScalef(1.0f, 0.8f, 0.1f);
-    glutSolidCube(1.0f);
+    glTranslatef(0.0f, 0.6f, -0.45f); // Center the backrest
+    glBegin(GL_QUADS);
+
+    // Front face with texture
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.5f, 0.4f, 0.05f);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(0.5f, 0.4f, 0.05f);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(0.5f, -0.4f, 0.05f);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(-0.5f, -0.4f, 0.05f);
+
+    // Back face with texture
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.5f, 0.4f, -0.05f);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(0.5f, 0.4f, -0.05f);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(0.5f, -0.4f, -0.05f);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(-0.5f, -0.4f, -0.05f);
+
+    // Other faces without texture (solid color)
+    glColor3f(0.5f, 0.5f, 0.5f);
+    // Left face
+    glVertex3f(-0.5f, 0.4f, 0.05f);
+    glVertex3f(-0.5f, 0.4f, -0.05f);
+    glVertex3f(-0.5f, -0.4f, -0.05f);
+    glVertex3f(-0.5f, -0.4f, 0.05f);
+
+    // Right face
+    glVertex3f(0.5f, 0.4f, 0.05f);
+    glVertex3f(0.5f, 0.4f, -0.05f);
+    glVertex3f(0.5f, -0.4f, -0.05f);
+    glVertex3f(0.5f, -0.4f, 0.05f);
+
+    // Top face
+    glVertex3f(-0.5f, 0.4f, 0.05f);
+    glVertex3f(0.5f, 0.4f, 0.05f);
+    glVertex3f(0.5f, 0.4f, -0.05f);
+    glVertex3f(-0.5f, 0.4f, -0.05f);
+
+    // Bottom face
+    glVertex3f(-0.5f, -0.4f, 0.05f);
+    glVertex3f(0.5f, -0.4f, 0.05f);
+    glVertex3f(0.5f, -0.4f, -0.05f);
+    glVertex3f(-0.5f, -0.4f, -0.05f);
+
+    glEnd();
     glPopMatrix();
 
     // Chair legs
@@ -175,6 +269,26 @@ void drawChair(float x, float z, float angle) {
     glPopMatrix();
 }
 
+void drawPainting(float x, float y, float z, float width, float height, GLuint texture) {
+    if (texture) {
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texture);
+    }
+
+    glColor3f(1.0f, 1.0f, 1.0f); // White to allow the texture to show
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(x - width / 2, y - height / 2, z);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(x + width / 2, y - height / 2, z);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(x + width / 2, y + height / 2, z);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(x - width / 2, y + height / 2, z);
+    glEnd();
+
+    if (texture) {
+        glDisable(GL_TEXTURE_2D);
+    }
+}
+
+
 void drawWalls() {
     // Wall dimensions
     float wallHeight = 5.0f;
@@ -183,6 +297,11 @@ void drawWalls() {
     float windowHeight = 2.0f;
     float windowYPosition = 1.5f; // Bottom of the window starts at this height
     float crossThickness = 0.1f;  // Thickness of the window cross
+    float paintingWidth = 2.0f;  // Width of the painting
+    float paintingHeight = 3.0f; // Height of the painting
+    float paintingYPosition = 2.5f; // Center of the painting height
+
+
 
     // Normals for each wall
     float wallNormals[4][3] = {
@@ -220,6 +339,7 @@ void drawWalls() {
 
         glBegin(GL_QUADS);
 
+
         // Apply repeating texture coordinates for tiling
         if (i == 1 || i == 0) { // Back (i == 0) and Front (i == 1) have windows
             // Bottom part of the wall (below the window)
@@ -247,14 +367,19 @@ void drawWalls() {
             glTexCoord2f(0.0f, repeat); glVertex3f(windowWidth / 2, windowYPosition + windowHeight, 0.0f);
         }
         else {
+
             // Normal wall without window (left and right walls)
             glTexCoord2f(0.0f, 0.0f); glVertex3f(-wallWidth / 2, 0.0f, 0.0f);
             glTexCoord2f(repeat, 0.0f); glVertex3f(-wallWidth / 2, wallHeight, 0.0f);
             glTexCoord2f(repeat, repeat); glVertex3f(wallWidth / 2, wallHeight, 0.0f);
             glTexCoord2f(0.0f, repeat); glVertex3f(wallWidth / 2, 0.0f, 0.0f);
+            
+            
         }
-
+       
         glEnd();
+
+        
 
         // Only add the window cross on the front and back walls
         if (i == 1 || i == 0) {
@@ -275,6 +400,12 @@ void drawWalls() {
 
             glEnd();
         }
+        else if (i==2) {
+            drawPainting(0.0f, paintingYPosition, 0.01f, paintingWidth, paintingHeight, painting);
+        }
+        else {
+            drawPainting(0.0f, paintingYPosition, -0.01f, paintingWidth, paintingHeight, painting);
+        }
 
         if (wallTexture) {
             glDisable(GL_TEXTURE_2D); // Disable the wall texture after drawing the walls
@@ -288,6 +419,16 @@ void drawWalls() {
 void drawTable(float x, float z) {
     glPushMatrix();
     glTranslatef(x, 1.0f, z);
+
+
+    // Enable texture for the table (assuming tableTexture is already loaded)
+    if (chairTexture) { // Assuming you have a texture for the table similar to chairTexture
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, chairTexture);
+    }
+
+    glColor3f(1.0f, 1.0f, 1.0f); // White to allow texture color to show
+    glNormal3f(0.0f, 1.0f, 0.0f); // Normal pointing upwards (top face)
 
     // Tabletop
     glColor3f(0.7f, 0.5f, 0.3f); // Wooden color
@@ -311,4 +452,82 @@ void drawTable(float x, float z) {
     }
 
     glPopMatrix();
+}
+
+void drawChandelier(float x, float y, float z) {
+    glPushMatrix();
+    glTranslatef(x, y, z); // Position chandelier at (x, y, z)
+
+    // Central body (smaller sphere for the base)
+    glColor3f(0.9f, 0.7f, 0.2f);  // Gold color
+    glutSolidSphere(0.4f, 32, 32);  // Reduced size sphere for the base
+
+    // Add the thin cylindrical base below the sphere to connect to the ceiling
+    glPushMatrix();
+    glTranslatef(0.0f, -0.4f, 0.0f);  // Position it right below the sphere
+    glColor3f(0.8f, 0.6f, 0.2f);  // Slightly darker gold for the stem
+    glScalef(0.1f, 0.4f, 0.1f);  // Thinner stem with reduced size
+    glutSolidCube(1.0f);  // Small cube for the stem
+    glPopMatrix();
+
+    // Curved chandelier arms (8 arms for realism, reduced size)
+    int numArms = 8;
+    float armLength = 1.8f;  // Shorter arms for a smaller chandelier
+    float armAngle = 360.0f / numArms;
+    glPushMatrix();
+
+    for (int i = 0; i < numArms; i++) {
+        glPushMatrix();
+        glRotatef(i * armAngle, 0.0f, 1.0f, 0.0f);  // Rotate each arm around the center
+
+        // Curved arm design (smaller, thinner cylinders)
+        glPushMatrix();
+        glColor3f(0.7f, 0.7f, 0.7f);  // Metallic gray for the arm
+        glTranslatef(armLength / 3.0f, 0.0f, 0.0f);  // Position for the curve
+        glScalef(0.08f, 0.08f, 1.2f);  // Thinner, smaller part of the arm
+        glutSolidCube(1.0f);  // First part of the arm
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslatef(armLength, 0.0f, 0.0f);  // Move to the end of the arm
+        glScalef(0.08f, 0.08f, 1.2f);  // Thinner part, smaller size
+        glutSolidCube(1.0f);  // Second part of the arm
+        glPopMatrix();
+
+        // Light bulb (smaller size with metallic base)
+        glTranslatef(armLength + 0.6f, 0.0f, 0.0f);  // Position the bulb at the end of the arm
+        glColor3f(1.0f, 1.0f, 1.0f);  // White for the light bulb
+        glutSolidSphere(0.3f, 16, 16);  // Smaller light bulb
+
+        // Add a metallic base around the light bulb
+        glColor3f(0.7f, 0.5f, 0.3f);  // Darker metallic color for the base
+        glTranslatef(0.0f, -0.3f, 0.0f);  // Move slightly down to position the base
+        glScalef(1.1f, 0.15f, 1.1f);  // Flatten it for a base appearance
+        glutSolidSphere(0.3f, 8, 8);  // The base of the light bulb
+        glPopMatrix();
+    }
+    glPopMatrix();
+
+    // Add hanging crystals beneath each arm (smaller size)
+    float crystalLength = 0.8f;  // Smaller length for crystals
+    glPushMatrix();
+    glColor3f(1.0f, 1.0f, 1.0f);  // Crystal color
+    for (int i = 0; i < numArms; i++) {
+        glPushMatrix();
+        glRotatef(i * armAngle, 0.0f, 1.0f, 0.0f);  // Rotate around the center
+
+        // Position the crystals below each arm
+        glTranslatef(armLength + 0.6f, -0.4f, 0.0f);  // Slightly below the arm
+        glutSolidSphere(0.08f, 8, 8);  // Smaller, delicate crystal
+
+        glTranslatef(0.0f, -crystalLength, 0.0f);  // Move further down for multiple crystals
+        glutSolidSphere(0.08f, 8, 8);  // Second crystal
+
+        glTranslatef(0.0f, -crystalLength, 0.0f);  // Move further down
+        glutSolidSphere(0.08f, 8, 8);  // Third crystal
+        glPopMatrix();
+    }
+    glPopMatrix();
+
+    glPopMatrix();  // End chandelier drawing
 }

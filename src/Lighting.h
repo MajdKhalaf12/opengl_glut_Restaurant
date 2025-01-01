@@ -8,8 +8,8 @@
 #include <Windows.h>
 #include <GL/glut.h>
 
-void setupLighting();
-void computeShadowMatrix(GLfloat shadowMatrix[4][4], const GLfloat groundPlane[4], const GLfloat lightPos[4]);
+extern bool isNightMode;
+void setupLighting(bool isNightMode);
 
 
 #endif

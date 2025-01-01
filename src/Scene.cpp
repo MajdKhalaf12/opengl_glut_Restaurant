@@ -10,6 +10,9 @@
 
 Camera camera;
 
+
+bool isNightMode = false;
+
 void initGL() {
     glClearColor(0.5f, 0.8f, 0.9f, 1.0f);
     glEnable(GL_DEPTH_TEST);
@@ -19,7 +22,6 @@ void initGL() {
 
     glutSetCursor(GLUT_CURSOR_NONE);
 
-    setupLighting();
 }
 
 void drawTablesAndChairs() {
@@ -36,31 +38,6 @@ void drawTablesAndChairs() {
     }
 }
 
-void renderShadowedObjects() {
-    float groundPlane[] = { 0.0f, 1.0f, 0.0f, 0.0f }; // y=0 plane
-    float lightPosition[] = { 10.0f, 10.0f, 10.0f, 1.0f };
-    float shadowMatrix[4][4];
-    computeShadowMatrix(shadowMatrix, groundPlane, lightPosition);
-
-    for (int i = 0; i < 4; ++i) {
-        for (int j = 0; j < 4; ++j) {
-            std::cout << "shadowMatrix[" << i << "][" << j << "] = " << shadowMatrix[i][j] << std::endl;
-        }
-    }
-
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    glPushMatrix();
-    glMultMatrixf((const float*)shadowMatrix);
-    glColor4f(1.0f, 0.0f, 0.0f, 0.7f); // Semi-transparent black
-    drawTablesAndChairs();             // Draw shadows of tables and chairs
-    glutSolidCube(1.0f);                       // Render a cube
-    glPopMatrix();
-
-    glDisable(GL_BLEND);
-}
 
 void mouseMotion(int x, int y) {
     camera.handleMouseMovement(x, y); // Update camera direction
@@ -88,12 +65,16 @@ void keyboard(unsigned char key, int x, int y) {
     else if (key == 'e' || key == 'E') {
         camera.moveDown(speed);
     }
+    if (key == 'n' || key == 'N') {
+        isNightMode = !isNightMode; // Toggle night mode
+     }
 
     glutPostRedisplay(); // Redraw the scene
 }
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    setupLighting(isNightMode);
 
     glLoadIdentity();
 
@@ -107,8 +88,7 @@ void display() {
 
     drawSkybox();  // Draw the skybox
     drawFloor();   // Draw the floor
-
-    renderShadowedObjects();   // Render shadows
+    drawChandelier(0.0f, 4.0f, 0.0f);
 
     // Render objects
     drawWalls();
@@ -116,5 +96,3 @@ void display() {
 
     glutSwapBuffers();  // Swap the buffers to display the scene
 }
-
-
