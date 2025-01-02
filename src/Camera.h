@@ -6,7 +6,7 @@
 
 
 #include <stdlib.h>
-#include <GL/glut.h>
+#include <GL/freeglut.h>
 
 struct Camera {
     float posX, posY, posZ;

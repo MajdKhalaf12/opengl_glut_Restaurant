@@ -7,7 +7,7 @@
 
 #include <Windows.h>
 
-#include <GL/glut.h>
+#include <GL/freeglut.h>
 #include <string>
 
 // Function to load a texture

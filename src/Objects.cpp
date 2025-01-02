@@ -3,7 +3,7 @@
 #include "Lighting.h"
 #include <stdlib.h>
 #include <Windows.h>
-#include <GL/glut.h>
+#include <GL/freeglut.h>
 
 #include <iostream>
 
@@ -35,11 +35,12 @@ void initializeSkyboxTextures() {
 }
 
 // Draw skybox
-void drawSkybox() {
+void drawSkybox(float cameraX, float cameraY, float cameraZ) {
 
     float size = 50.0f;
 
     glPushMatrix();
+    glTranslatef(cameraX, cameraY, cameraZ);
     glDisable(GL_LIGHTING); // Disable lighting for the skybox
 
     glDisable(GL_LIGHTING); // Disable lighting for the skybox
@@ -90,17 +91,17 @@ void drawSkybox() {
             glTexCoord2f(0.0f, 1.0f); glVertex3f(-size, size, size);
             break;
         case 5: // Bottom
-            glTexCoord2f(0.0f, 0.0f); glVertex3f(-size, -size, size);
-            glTexCoord2f(1.0f, 0.0f); glVertex3f(size, -size, size);
-            glTexCoord2f(1.0f, 1.0f); glVertex3f(size, -size, -size);
-            glTexCoord2f(0.0f, 1.0f); glVertex3f(-size, -size, -size);
+            glTexCoord2f(0.0f, 1.0f); glVertex3f(-size, -size, size);  // Swap these two
+            glTexCoord2f(1.0f, 1.0f); glVertex3f(size, -size, size);   // Swap these two
+            glTexCoord2f(1.0f, 0.0f); glVertex3f(size, -size, -size);
+            glTexCoord2f(0.0f, 0.0f); glVertex3f(-size, -size, -size);
             break;
         }
         glEnd();
 
         glDisable(GL_TEXTURE_2D);
     }
-
+    glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
     glPopMatrix();
 }

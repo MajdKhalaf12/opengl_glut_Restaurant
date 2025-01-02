@@ -1,5 +1,5 @@
 #include "Lighting.h"
-#include <GL/glut.h>
+#include <GL/freeglut.h>
 
 void setupLighting(bool isNightMode) {
     GLfloat lightPos[] = { 10.0f, 10.0f, 10.0f, 1.0f };

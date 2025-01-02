@@ -5,7 +5,7 @@
 
 #include <stdlib.h>
 #include <Windows.h>
-#include <GL/glut.h>
+#include <GL/freeglut.h>
 #include <iostream>
 
 Camera camera;
@@ -86,7 +86,7 @@ void display() {
         camera.posX + camera.frontX, camera.posY + camera.frontY, camera.posZ + camera.frontZ,
         camera.upX, camera.upY, camera.upZ);
 
-    drawSkybox();  // Draw the skybox
+    drawSkybox(camera.posX, camera.posY, camera.posZ);  // Draw the skybox
     drawFloor();   // Draw the floor
     drawChandelier(0.0f, 4.0f, 0.0f);
 

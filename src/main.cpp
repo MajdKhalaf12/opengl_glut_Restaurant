@@ -515,7 +515,7 @@
 
 #define GLUT_DISABLE_ATEXIT_HACK
 #include <stdlib.h>
-#include <GL/glut.h> 
+#include <GL/freeglut.h> 
 
 void reshape(int w, int h);
 void initScene();

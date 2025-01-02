@@ -6,7 +6,7 @@
 
 void drawChandelier(float x, float y, float z);
 void initializeSkyboxTextures(); 
-void drawSkybox();
+void drawSkybox(float cameraX, float cameraY, float cameraZ);
 void initializeTextures();
 void drawFloor();
 void drawWalls();

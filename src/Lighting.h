@@ -6,7 +6,7 @@
 
 #include <stdlib.h>
 #include <Windows.h>
-#include <GL/glut.h>
+#include <GL/freeglut.h>
 
 extern bool isNightMode;
 void setupLighting(bool isNightMode);
